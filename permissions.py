@@ -14,7 +14,6 @@ def authorization_required(admin_required=False, is_owner=False):
 
         @wraps(f)
         def wrapper(*args, **kwargs):
-            # print(roles)
             header_token = request.headers.get('Authorization')
             if header_token is None or "":
                 return dict(message='Token required.'), 401
