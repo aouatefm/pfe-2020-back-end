@@ -5,13 +5,19 @@ from flask import jsonify, request
 
 from models.user import User
 from permissions import authorization_required
-from services.store import create_store, get_stores_list, get_store_by_id, delete_store, update_store
+from services.store import create_store, get_stores_list, get_store_by_id, delete_store, update_store, get_stores_names, \
+    get_store_customers
 from settings import app
 
 
 @app.route('/stores', methods=['GET'])
 def get_all_stores_api():
     return jsonify(get_stores_list())
+
+
+@app.route('/stores/names', methods=['GET'])
+def get_all_stores_name_api():
+    return jsonify(get_stores_names())
 
 
 @app.route('/stores/<store_id>', methods=['GET'])
@@ -23,6 +29,20 @@ def get_store_by_id_api(store_id):
         return jsonify({"message": detail}), 404
 
 
+@app.route('/stores/<store_id>/customers', methods=['GET'])
+@authorization_required()
+def get_store_customers_api(store_id, current_user: User):
+    store, detail = get_store_by_id(store_id)
+    if not store:
+        return jsonify({"message": detail}), 404
+
+    if current_user.store_id != store_id:
+        return jsonify({"message": "Unauthorized access!"}), 403
+
+    result_data = get_store_customers(store_id)
+    return jsonify(result_data), 200
+
+
 @app.route('/stores', methods=['POST'])
 @authorization_required()
 def create_store_api(current_user: User):
@@ -30,7 +50,7 @@ def create_store_api(current_user: User):
     if 'name' not in payload:
         return jsonify({"message": "store name required"}), 422
 
-    store, detail = create_store(owner_id=current_user.uid, name=payload['name'])
+    store, detail = create_store(owner_id=current_user.uid, name=payload.pop('name'), **payload)
     if store:
         return jsonify({"message": detail}), 201
     else:
@@ -61,3 +81,5 @@ def delete_store_api(store_id, current_user: User):
         return jsonify({"message": message}), 200
     else:
         return jsonify({"message": message}), 404
+
+

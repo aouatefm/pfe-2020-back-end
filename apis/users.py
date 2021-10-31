@@ -2,6 +2,7 @@ from flask import jsonify, request
 
 from models.user import User
 from permissions import authorization_required
+from services.store import get_store_by_id
 from services.user import get_user_by_id, get_all_users, delete_user, create_user, update_user_profile, \
     update_user_password, update_user_email
 from settings import app
@@ -12,7 +13,6 @@ from settings import app
 @app.route('/users', methods=['GET'])
 @authorization_required(admin_required=True)
 def get_all_users_api(current_user: User):
-
     users = get_all_users()
     return jsonify(users)
 
@@ -24,6 +24,19 @@ def get_user_by_id_api(uid):
         return jsonify({"message": "user not found"}), 404
 
     return jsonify(user.__dict__), 200
+
+
+@app.route('/users/<uid>/store', methods=['GET'])
+def get_user_store_api(uid):
+    user, detail = get_user_by_id(uid)
+    if not user:
+        return jsonify({"message": "user not found"}), 404
+    if not user.store_id:
+        return jsonify({"message": "user does not have a store!"}), 404
+
+    store, _ = get_store_by_id(user.store_id)
+
+    return jsonify(store.__dict__), 200
 
 
 @app.route('/users', methods=['POST'])

@@ -6,6 +6,8 @@ class Store:
         self.store_id = kwargs.get('store_id', name.replace(' ', '-').lower())
         self.owner_id = owner_id
         self.address = kwargs.get('address', "")
+        self.lat = kwargs.get('lat', "")
+        self.lng = kwargs.get('lng', "")
         self.phone_number = kwargs.get('phone_number', "")
         self.description = kwargs.get('description', "")
         self.cover_image = kwargs.get('cover_image', "")

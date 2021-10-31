@@ -22,6 +22,9 @@ def authorization_required(admin_required=False, is_owner=False):
                 uid = auth.verify_id_token(header_token).get('uid')
                 user_record = auth.get_user(uid)
                 current_user, detail = get_user_by_id(uid)
+                if not current_user:
+                    print(f"user {uid} not found!")
+                    return dict(message=f"user {uid} not found!"), 403
 
                 if admin_required and current_user.role != 'admin':
                     return dict(message='admin required.'), 401

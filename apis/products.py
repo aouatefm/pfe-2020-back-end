@@ -2,14 +2,19 @@ from flask import request, jsonify
 
 from models.user import User
 from permissions import authorization_required
-from services.product import get_all_products, create_new_product, get_product_by_id
+from services.product import get_all_products, create_new_product, get_product_by_id, get_products_by_store
 from settings import app
-from models import product as product_model
 
 
 @app.route('/products', methods=['GET'])
 def get_all_products_api():
     products = get_all_products()
+    return jsonify(products)
+
+
+@app.route('/products/store/<store_id>', methods=['GET'])
+def get_store_products_api(store_id):
+    products = get_products_by_store(store_id)
     return jsonify(products)
 
 

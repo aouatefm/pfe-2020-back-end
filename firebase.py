@@ -10,4 +10,7 @@ COLLECTIONS = dict(users='users',
                    stores='stores',
                    products='products',
                    categories='categories',
+                   ratings='ratings',
+                   orders='orders',
+                   coupons='coupons',
                    )
