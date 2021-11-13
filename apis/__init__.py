@@ -5,3 +5,4 @@ from .stores import *
 from .rating import *
 from .orders import *
 from .coupons import *
+from .dashboards import *

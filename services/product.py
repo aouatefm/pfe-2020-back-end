@@ -1,16 +1,20 @@
 from firebase import fs, COLLECTIONS as COL
 from models.product import Product
+from services.rating import get_product_ratings_avg
 
 
 def get_all_products() -> [dict]:
     products = fs.collection(COL['products']).stream()
-    result = [dict(id=c.id, **c.to_dict()) for c in products]
+    result = [dict(id=c.id, ratings_avg=get_product_ratings_avg(c.id), **c.to_dict()) for c in products]
     return result
 
 
 def get_products_by_store(store_id: str) -> [dict]:
     products = fs.collection(COL['products']).where('store_id', '==', store_id).stream()
-    result = [dict(id=c.id, **c.to_dict()) for c in products]
+    result = [dict(id=c.id,
+                   ratings_avg=get_product_ratings_avg(c.id),
+                   **c.to_dict()) for c in products
+              ]
     return result
 
 
@@ -19,7 +23,10 @@ def get_product_by_id(product_id: str) -> (Product, str) or (None, str):
     if not product.exists:
         return None, "product does not exist"
     else:
-        product = Product(product_id=product.id, **product.to_dict())
+        product = Product(product_id=product.id,
+                          ratings_avg=get_product_ratings_avg(product.id),
+                          **product.to_dict()
+                          )
 
     return product, "product found."
 

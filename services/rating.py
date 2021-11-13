@@ -1,3 +1,5 @@
+from math import ceil
+
 from firebase import fs, COLLECTIONS as COL
 from models.rating import Rating
 from models.user import User
@@ -31,12 +33,20 @@ def get_ratings_by_product(product_id: str) -> (dict, str) or (None, str):
     ratings = fs.collection(COL['ratings']).where('product_id', '==', product_id).stream()
     ratings = [dict(id=c.id, **c.to_dict()) for c in ratings]
 
-    # calculate average of ratings
+    avg = get_product_ratings_avg(product_id, ratings=ratings)
+    for r in ratings:
+        rating_stats[f'{r.get("rating_value")}'] += 1
+    result = dict(ratings=ratings, avg=avg, count=len(ratings), rating_stats=rating_stats)
+    return result, f"{len(ratings)} ratings found"
+
+
+def get_product_ratings_avg(product_id: str, ratings=None) -> float:
+    if ratings is None:  # for db calls optimisation
+        ratings = fs.collection(COL['ratings']).where('product_id', '==', product_id).stream()
+        ratings = [dict(id=c.id, **c.to_dict()) for c in ratings]
+
     if len(ratings) > 0:
         avg = sum(r['rating_value'] for r in ratings) / len(ratings)
     else:
         avg = 0
-    for r in ratings:
-        rating_stats[f'{r.get("rating_value")}'] += 1
-    result = dict(ratings=ratings, avg=avg, count=len(ratings),rating_stats=rating_stats)
-    return result, f"{len(ratings)} ratings found"
+    return round(avg * 2) / 2
