@@ -17,7 +17,7 @@ def get_general_stats(store_id: str = None) -> dict:
 
     if store_id is None:
         result['total_products'] = len(get_all_products())
-        result['total_stores'] = len(get_stores_list())
+        result['total_stores'] = len(get_stores_list(False))
         result['total_users'] = len(get_all_users())
         result['top_stores'] = dict()
 

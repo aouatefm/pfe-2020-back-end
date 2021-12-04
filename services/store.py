@@ -61,8 +61,12 @@ def delete_store(store_id: str) -> (bool, str):
     return True, "store deleted."
 
 
-def get_stores_list() -> [dict]:
-    stores = fs.collection(COL['stores']).stream()
+def get_stores_list(is_active: bool) -> [dict]:
+    if is_active:
+        stores = fs.collection(COL['stores']).where("is_active", "==", True).stream()
+    else:
+        stores = fs.collection(COL['stores']).stream()
+
     return [s.to_dict() for s in stores]
 
 
@@ -92,4 +96,3 @@ def get_store_customers(store_id) -> [dict]:
                         **customer.__dict__)
             customers_and_orders.append(data)
     return customers_and_orders
-

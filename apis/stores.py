@@ -8,11 +8,13 @@ from permissions import authorization_required
 from services.store import create_store, get_stores_list, get_store_by_id, delete_store, update_store, get_stores_names, \
     get_store_customers
 from settings import app
+from utilities import bool_eval
 
 
 @app.route('/stores', methods=['GET'])
 def get_all_stores_api():
-    return jsonify(get_stores_list())
+    is_active = request.args.get('is_active', default=None, type=bool_eval)
+    return jsonify(get_stores_list(is_active))
 
 
 @app.route('/stores/names', methods=['GET'])
@@ -81,5 +83,3 @@ def delete_store_api(store_id, current_user: User):
         return jsonify({"message": message}), 200
     else:
         return jsonify({"message": message}), 404
-
-

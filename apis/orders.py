@@ -47,7 +47,6 @@ def get_order_by_id_api(order_id, current_user: User):
 @authorization_required()
 def update_order_api(order_id, current_user: User):
     payload = request.get_json()
-
     order, message = get_order_by_id(order_id)
     if not order:
         return jsonify({"message": message}), 404

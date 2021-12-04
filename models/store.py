@@ -14,6 +14,7 @@ class Store:
         self.logo = kwargs.get('logo', "")
         self.name = name
         self.socials = kwargs.get('socials', dict(facebook="", instagram="", youtube=""))
+        self.is_active = False
 
     store_id: str
     address: str
@@ -24,3 +25,4 @@ class Store:
     logo: str
     name: str
     socials: dict
+    is_active: bool
