@@ -51,7 +51,6 @@ def create_store_api(current_user: User):
     payload = request.get_json()
     if 'name' not in payload:
         return jsonify({"message": "store name required"}), 422
-
     store, detail = create_store(owner_id=current_user.uid, name=payload.pop('name'), **payload)
     if store:
         return jsonify({"message": detail}), 201

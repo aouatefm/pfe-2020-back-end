@@ -13,7 +13,7 @@ class User:
         self.billing_address = kwargs.get('billing_address', None)
         self.shipping_address = kwargs.get('shipping_address', None)
         self.store_id = kwargs.get('store_id', None)
-        self.avatar: str = kwargs.get('store_id', DEFAULT_AVATAR_URL)
+        self.avatar: str = kwargs.get('avatar', DEFAULT_AVATAR_URL)
         self.role: str = kwargs.get('role', None)
 
     uid: str

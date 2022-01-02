@@ -21,7 +21,6 @@ def get_general_stats(store_id: str = None) -> dict:
         result['total_users'] = len(get_all_users())
         result['top_stores'] = dict()
 
-
         orders = fs.collection(COL['orders']) \
             .order_by("order_date", direction=firestore.Query.DESCENDING).stream()
     else:
@@ -78,8 +77,15 @@ def get_general_stats(store_id: str = None) -> dict:
         result['monthly_sales_products']['sales'].append(v.get('sales'))
 
     # sort from sup to inf
-    total_days = ceil((orders_docs[0].get('order_date') - orders_docs[-1].get('order_date')).days)
-    result['sale_per_day'] = result.get('total_sales') / total_days
+    try:
+        total_days = ceil((orders_docs[0].get('order_date') - orders_docs[-1].get('order_date')).days)
+    except IndexError:
+        total_days = 0
+
+    try:
+        result['sale_per_day'] = result.get('total_sales') / total_days
+    except ZeroDivisionError:
+        result['sale_per_day'] = 0
     result['days_since_first_order'] = total_days
     # result['top_stores'] = {k: v for k, v in sorted(top_stores.items(), key=lambda item: item[1])}
     if store_id is None:
