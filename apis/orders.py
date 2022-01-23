@@ -40,6 +40,7 @@ def get_order_by_id_api(order_id, current_user: User):
     order, message = get_order_by_id(order_id)
     if not order:
         return jsonify({"message": message}), 404
+
     return order.__dict__, 200
 
 

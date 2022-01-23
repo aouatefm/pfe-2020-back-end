@@ -49,3 +49,26 @@ def create_new_product(creator_id: str, store_id: str, **kwargs) -> (bool, str):
         return True, f"product created. (product_id: {res[1].id})"
     except KeyError as e:
         return False, f"missing params ({str(e)})"
+
+
+def can_i_rate(user_id, product_id):
+    customer_ratings = fs.collection(COL['ratings']) \
+        .where('user_id', '==', user_id) \
+        .where('product_id', '==', product_id) \
+        .stream()
+
+    if len(list(customer_ratings)) > 0:
+        print('product Already rated!')
+        return False
+
+    customer_orders = fs.collection(COL['orders']) \
+        .where('customer_id', '==', user_id) \
+        .where('status', '==', 'completed') \
+        .stream()
+    customer_orders = [dict(order_id=o.id, products=o.to_dict().get('products')) for o in customer_orders]
+    for o in customer_orders:
+        for p in o.get('products'):
+            if product_id == p.get('product_id'):
+                return True
+
+    return False

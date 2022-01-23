@@ -5,6 +5,7 @@ from flask import jsonify, request
 
 from models.user import User
 from permissions import authorization_required
+from services.rating import get_vendor_rating_avg
 from services.store import create_store, get_stores_list, get_store_by_id, delete_store, update_store, get_stores_names, \
     get_store_customers
 from settings import app
@@ -26,7 +27,8 @@ def get_all_stores_name_api():
 def get_store_by_id_api(store_id):
     store, detail = get_store_by_id(store_id)
     if store:
-        return jsonify(store.__dict__), 200
+        avg_rating = get_vendor_rating_avg(store_id)
+        return jsonify(dict(avg_rating=avg_rating, **store.__dict__)), 200
     else:
         return jsonify({"message": detail}), 404
 

@@ -2,7 +2,7 @@ from flask import request, jsonify
 
 from models.user import User
 from permissions import authorization_required
-from services.product import get_all_products, create_new_product, get_product_by_id, get_products_by_store
+from services.product import get_all_products, create_new_product, get_product_by_id, get_products_by_store, can_i_rate
 from services.recommended_products import recommended_products, data_prep
 from settings import app
 import pickle
@@ -62,7 +62,13 @@ def product_recommendations(product_id):
     rec_model = pickle.load(open('rec_model.pickle', 'rb'))
 
     # Call recommendation engine
-    recommendations = recommended_products(title, data, rec_model)
+    recommendations = recommended_products(title, data, rec_model)[0]
 
     # return recommended products
     return jsonify(recommendations)
+
+
+@app.route('/products/<product_id>/can_i_rate', methods=['GET'])
+@authorization_required()
+def can_i_rate_api(current_user: User, product_id):
+    return dict(res=can_i_rate(current_user.uid, product_id))

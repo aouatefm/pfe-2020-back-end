@@ -79,9 +79,9 @@ def get_order_by_id(order_id: str) -> (Order, str) or (None, str):
     if not order.exists:
         return None, "order does not exist"
     else:
-        product = Order(order_id=order.id, **order.to_dict())
+        order = Order(order_id=order.id, **order.to_dict())
 
-    return product, "order found."
+    return order, "order found."
 
 
 def update_order(order_id, **kwargs) -> (bool, str):

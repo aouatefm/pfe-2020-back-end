@@ -1,3 +1,4 @@
+import datetime
 from math import ceil
 
 from firebase import fs, COLLECTIONS as COL
@@ -5,15 +6,14 @@ from models.rating import Rating
 from models.user import User
 
 
-def create_rating(rating_value: float, rating_date, product_id, user: User) -> (bool, str):
-    # TODO : check if the user bought the product
-    # TODO : check if the user already rated the product
+def create_rating(store_id, rating_value, product_id, user: User, rating_date=datetime.datetime.now()) -> (bool, str):
     try:
         rate = dict(rating_value=rating_value,
                     user_id=user.uid,
                     rating_date=rating_date,
                     product_id=product_id,
                     user_name=user.display_name,
+                    store_id=store_id,
                     avatar=user.avatar)
 
         res = fs.collection(COL['ratings']).add(rate)
@@ -44,6 +44,17 @@ def get_product_ratings_avg(product_id: str, ratings=None) -> float:
     if ratings is None:  # for db calls optimisation
         ratings = fs.collection(COL['ratings']).where('product_id', '==', product_id).stream()
         ratings = [dict(id=c.id, **c.to_dict()) for c in ratings]
+
+    if len(ratings) > 0:
+        avg = sum(r['rating_value'] for r in ratings) / len(ratings)
+    else:
+        avg = 0
+    return round(avg * 2) / 2
+
+
+def get_vendor_rating_avg(store_id: str) -> float:
+    ratings = fs.collection(COL['ratings']).where('store_id', '==', store_id).stream()
+    ratings = [dict(id=c.id, **c.to_dict()) for c in ratings]
 
     if len(ratings) > 0:
         avg = sum(r['rating_value'] for r in ratings) / len(ratings)
