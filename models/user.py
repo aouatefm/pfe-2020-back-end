@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from settings import DEFAULT_AVATAR_URL
 
 
@@ -15,6 +17,7 @@ class User:
         self.store_id = kwargs.get('store_id', None)
         self.avatar: str = kwargs.get('avatar', DEFAULT_AVATAR_URL)
         self.role: str = kwargs.get('role', None)
+        self.created_at: str = kwargs.get('created_at', None)
 
     uid: str
     email: str
@@ -27,3 +30,4 @@ class User:
     store_id: str
     avatar: str
     role: str
+    created_at: datetime

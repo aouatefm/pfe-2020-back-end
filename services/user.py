@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from firebase_admin import auth
 from firebase_admin._auth_utils import UserNotFoundError
 from firebase_admin.auth import UserRecord
@@ -42,6 +44,7 @@ def create_user(email: str, password: str, **kwargs) -> (User, str) or (None, st
             pass
 
     # creating user in the firebase auth
+    kwargs['created_at'] = datetime.now()
     user_record: UserRecord = auth.create_user(email=email, password=password)
     user = User(uid=user_record.uid, email=email, **kwargs)
     user.role = 'user'  # set default user role to user
