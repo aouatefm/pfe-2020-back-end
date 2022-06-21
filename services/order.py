@@ -67,6 +67,7 @@ def create_new_order(current_user: User, products: [dict], **kwargs) -> (bool, s
             try:
                 send_order_confirmation_email(current_user, order)
             except Exception as e:
+                print("Exception during sending email")
                 print(e)
 
         except KeyError as e:

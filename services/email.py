@@ -14,7 +14,7 @@ def send_order_confirmation_email(user: User, order: Order):
     </tr>"""
 
     for p in order.products:
-        price = p.get('discounted_price') if p.get('discounted_price') > 0 else p.get('price')
+        price = p.get('discounted_price') if p.get('discounted_price', None) else p.get('price')
         product_rows += product_row.replace('#IMG_URL', p.get('images')).replace('#PRODUCT_NAME', p.get('name')) \
             .replace('#QUANTITY', str(p.get('quantity'))).replace('#PRICE', str(price))
 
@@ -59,5 +59,6 @@ def send_order_confirmation_email(user: User, order: Order):
         }]
     }
     result = mailjet.send.create(data=data)
+    print("mailjet log")
     print(result.status_code)
     print(result.json())

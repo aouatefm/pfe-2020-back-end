@@ -2,7 +2,8 @@ from flask import request, jsonify
 
 from models.user import User
 from permissions import authorization_required
-from services.product import get_all_products, create_new_product, get_product_by_id, get_products_by_store, can_i_rate
+from services.product import get_all_products, create_new_product, get_product_by_id, get_products_by_store, can_i_rate, \
+    edit_product, delete_product
 from services.recommended_products import recommended_products, data_prep
 from settings import app
 import pickle
@@ -26,6 +27,35 @@ def get_product_by_id_api(product_id):
     if not product:
         return jsonify({"message": message}), 404
     return product.__dict__, 200
+
+
+@app.route('/products/<product_id>', methods=['PUT'])
+def edit_product_api(product_id):
+    product, message = get_product_by_id(product_id)
+    if not product:
+        return jsonify({"message": message}), 404
+
+    payload = request.get_json()
+    success, message = edit_product(product_id, **payload)
+
+    if not success:
+        return jsonify({"message": message}), 400
+
+    return jsonify({"message": message}), 201
+
+
+@app.route('/products/<product_id>', methods=['DELETE'])
+def delete_product_api(product_id):
+    product, message = get_product_by_id(product_id)
+    if not product:
+        return jsonify({"message": message}), 404
+
+    success, message = delete_product(product_id)
+
+    if not success:
+        return jsonify({"message": message}), 400
+
+    return jsonify({"message": message}), 201
 
 
 @app.route('/products', methods=['POST'])

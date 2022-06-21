@@ -59,7 +59,8 @@ def get_all_users() -> [dict]:
 
 def delete_user(uid) -> (bool, str):
     try:
-        auth.delete_user(uid)
+        auth.
+        (uid)
         fs.collection(COL['users']).document(uid).delete()
         return True, "user deleted"
     except UserNotFoundError as e:
