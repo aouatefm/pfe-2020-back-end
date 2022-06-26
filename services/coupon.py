@@ -34,9 +34,10 @@ def apply_coupon(coupon: Coupon, products: [dict]) -> [dict]:
         if p.get("product_id") in eligible_products:
             p['eligible'] = True
             if coupon.discount_type == 'fixed':
-                p['discounted_price'] = float(p['price']) - int(coupon.discount_amount)
+                p['discounted_price'] = max(0.0, float(p['price']) - int(coupon.discount_amount))
+
             else:
-                p['discounted_price'] = float(p['price']) * (100 - int(coupon.discount_amount)) / 10
+                p['discounted_price'] = float(p['price']) * ((100 - int(coupon.discount_amount)) / 100)
     return products
 
 
